@@ -10,7 +10,12 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(loginInfo: SignInUserDto): Promise<{ access_token: string }> {
+  async signIn(loginInfo: SignInUserDto): Promise<{
+    id: number;
+    username: string;
+    email: string;
+    access_token: string;
+  }> {
     const user = await this.usersService.getUserByEmail(loginInfo.email);
 
     if (user?.password !== loginInfo.password)
@@ -19,6 +24,9 @@ export class AuthService {
     const payload = { sub: user.id, username: user.email };
 
     return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
       access_token: await this.jwtService.signAsync(payload),
     };
   }
